@@ -1,0 +1,19 @@
+name: docker-smoke-test
+on: [push]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up -d --build
+      - name: Aguarda a API responder na porta 8080
+        run: |
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8080/api/auth/login \
+              -H 'Content-Type: application/json' -d '{"email":"admin@pigz.com","password":"admin123"}')
+            if [ "$code" = "200" ]; then echo "API no ar"; exit 0; fi
+            sleep 5
+          done
+          docker compose logs
+          exit 1

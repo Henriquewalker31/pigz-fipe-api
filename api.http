@@ -1,0 +1,46 @@
+@base = http://localhost:8080
+
+# @name login
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{"email": "admin@pigz.com", "password": "admin123"}
+
+###
+@token = {{login.response.body.token}}
+
+### Veículos disponíveis com comparação FIPE
+GET {{base}}/api/vehicles?sort=price_asc
+Authorization: Bearer {{token}}
+
+### Comparação detalhada com histórico
+GET {{base}}/api/vehicles/1/fipe-comparison
+Authorization: Bearer {{token}}
+
+### Cadastrar modelo FIPE (admin)
+POST {{base}}/api/fipe/models
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"fipe_code": "004403-4", "vehicle_type": "carro", "brand": "Fiat", "model": "Argo Drive 1.0", "model_year": 2023, "fuel": "Flex"}
+
+### Adicionar mês ao histórico (admin)
+POST {{base}}/api/fipe/models/4/prices
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"reference_month": "2026-11", "price": 71500.00}
+
+### Anunciar veículo vinculado à FIPE (admin)
+POST {{base}}/api/vehicles
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"fipe_model_id": 4, "brand": "Fiat", "model": "Argo", "version": "Drive 1.0", "body_type": "hatch", "manufacture_year": 2022, "model_year": 2023, "fuel": "Flex", "transmission": "manual", "mileage": 25000, "doors": 4, "features": ["multimídia"], "city": "Curitiba", "state": "PR", "price": 68900, "status": "available"}
+
+### Criar usuário comum (admin)
+POST {{base}}/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name": "Maria", "email": "maria@pigz.com", "password": "senha1234"}
