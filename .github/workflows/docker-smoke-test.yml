@@ -5,7 +5,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: docker compose up -d --build
       - name: Aguarda a API responder na porta 8080
         run: |
